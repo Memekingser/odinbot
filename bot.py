@@ -41,7 +41,7 @@ timezone = pytz.timezone('Asia/Shanghai')
 PROXY_URL = os.getenv('PROXY_URL', None)  # 例如：'http://127.0.0.1:7890'
 
 # 配置代理
-if PROXY_URL:
+if PROXY_URL and not os.getenv('RAILWAY_STATIC_URL'):  # 只在非 Railway 环境中使用代理
     logger.info(f"使用代理：{PROXY_URL}")
     os.environ['HTTPS_PROXY'] = PROXY_URL
     os.environ['HTTP_PROXY'] = PROXY_URL
@@ -237,7 +237,10 @@ def main():
     try:
         # 创建更新器
         logger.info("正在创建更新器...")
-        updater = Updater(TOKEN, use_context=True)
+        request_kwargs = {}
+        if PROXY_URL and not os.getenv('RAILWAY_STATIC_URL'):
+            request_kwargs['proxy_url'] = PROXY_URL
+        updater = Updater(TOKEN, use_context=True, request_kwargs=request_kwargs)
         
         # 获取调度器
         dp = updater.dispatcher
@@ -251,7 +254,7 @@ def main():
         logger.info("机器人已启动...")
         logger.info(f"Bot Token: {TOKEN[:10]}...")  # 只打印 token 的前 10 个字符
         logger.info(f"已加载的活跃群组：{load_active_groups()}")
-        if PROXY_URL:
+        if PROXY_URL and not os.getenv('RAILWAY_STATIC_URL'):
             logger.info(f"使用代理：{PROXY_URL}")
         
         # 开始轮询
