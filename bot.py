@@ -243,8 +243,8 @@ def main():
         
         # 开始轮询
         logger.info("开始轮询...")
-        # 获取 PORT 环境变量
-        port = int(os.getenv('PORT', 8000))
+        # 使用 443 端口
+        port = 443
         # 启动 webhook 模式
         updater.start_webhook(
             listen='0.0.0.0',
@@ -252,7 +252,9 @@ def main():
             url_path=TOKEN
         )
         # 设置 webhook URL
-        updater.bot.set_webhook(url=f'https://{os.getenv("RAILWAY_STATIC_URL")}/{TOKEN}')
+        webhook_url = f'https://{os.getenv("RAILWAY_STATIC_URL")}/{TOKEN}'
+        logger.info(f"设置 webhook URL: {webhook_url}")
+        updater.bot.set_webhook(url=webhook_url)
         updater.idle()
     except Exception as e:
         logger.error(f"启动机器人时发生错误: {str(e)}")
