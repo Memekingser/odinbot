@@ -247,7 +247,7 @@ def main():
         port = 443
         # 启动 webhook 模式
         updater.start_webhook(
-            listen='0.0.0.0',
+            listen='localhost',  # 使用 localhost 而不是 0.0.0.0
             port=port,
             url_path=TOKEN
         )
